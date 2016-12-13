@@ -1,6 +1,6 @@
 package com.noddy.androidframework.sample.asynctask;
 
-import com.noddy.androidframework.specification.base.BaseQuerySpecification;
+import com.noddy.androidframework.asynctask.specification.base.BaseQuerySpecification;
 
 /**
  * Created by NoddyLaw on 2016/12/13.

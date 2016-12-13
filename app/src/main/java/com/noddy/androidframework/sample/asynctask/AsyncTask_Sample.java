@@ -4,7 +4,7 @@ import android.app.Application;
 
 import com.noddy.androidframework.asynctask.ConnectionAsyncTask;
 import com.noddy.androidframework.asynctask.contracts.CallbackContract;
-import com.noddy.androidframework.specification.base.BaseQuerySpecification;
+import com.noddy.androidframework.asynctask.specification.base.BaseQuerySpecification;
 
 import java.net.HttpURLConnection;
 

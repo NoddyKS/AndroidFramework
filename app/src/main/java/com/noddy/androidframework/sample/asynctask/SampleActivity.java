@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.noddy.androidframework.asynctask.contracts.CallbackContract;
+import com.noddy.androidframework.asynctask.specification.PostSpecification;
 
 /**
  * Created by NoddyLaw on 2016/12/13.
@@ -32,7 +33,7 @@ public class SampleActivity extends AppCompatActivity {
             public void onApiRequestFail(String errorMsg) {
 
             }
-        }, new Specification_sample());
+        }, new PostSpecification());
 
         async_sample.setmNumberToRetryQuery(3);//set number to try query times
         async_sample.execute();

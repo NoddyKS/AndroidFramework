@@ -7,8 +7,11 @@ import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.noddy.androidframework.specification.base.BaseQuerySpecification;
+import com.noddy.androidframework.Until;
+import com.noddy.androidframework.asynctask.specification.base.BaseQuerySpecification;
 import com.noddy.androidframework.config.Configs;
+
+import static com.noddy.androidframework.Until.checkNotNull;
 
 /**
  * Created by NoddyLaw on 2016/12/5.
@@ -52,7 +55,7 @@ public abstract class ConnectionAsyncTask extends android.os.AsyncTask<Object, O
 
     @Override
     protected Object doInBackground(Object... arg0) {
-        if (!isConnected())
+        if (!Until.isConnected(mApplication))
             return null;
 
         for (int i = 0; i < DEFAULT_RETRY_QUERY; i++) {
@@ -79,27 +82,6 @@ public abstract class ConnectionAsyncTask extends android.os.AsyncTask<Object, O
             onApiResponse(mSpectification.getResponseCode(), result);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
-        }
-    }
-
-    private boolean isConnected() {
-        try {
-            ConnectivityManager cm = (ConnectivityManager) mApplication.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-            if (networkInfo != null && networkInfo.isConnected()) {
-                return true;
-            }
-        } catch (Exception e) {
-
-        }
-        return false;
-    }
-
-    private static <T> T checkNotNull(T reference, @Nullable Object errorMessage) {
-        if (reference == null) {
-            throw new NullPointerException(String.valueOf(errorMessage));
-        } else {
-            return reference;
         }
     }
 }
