@@ -6,6 +6,7 @@ package com.noddy.androidframework.asynctask.specification.base;
 
 public  abstract class BaseQuerySpecification {
     private int mResponseCode;
+    private String mResponseMsg;
 
     public abstract Object onQuery();
 
@@ -14,6 +15,14 @@ public  abstract class BaseQuerySpecification {
     }
 
     public void setResponseCode(int responseCode) {
-        this.mResponseCode = mResponseCode;
+        this.mResponseCode = responseCode;
+    }
+
+    public String getResponseMsg() {
+        return mResponseMsg;
+    }
+
+    public void setResponseMsg(String mResponseMsg) {
+        this.mResponseMsg = mResponseMsg;
     }
 }

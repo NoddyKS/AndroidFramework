@@ -5,14 +5,19 @@ package com.noddy.androidframework.asynctask.contracts;
  */
 
 public interface CallbackContract {
-
     interface ConnectionCallback<T> {
 
-        void onApiResponseSuccess(int resultCode, T data);
+        void onApiResponseSuccess(int responseCode, T data);
 
-        void onApiResponseFail(int resultCode);
+        void onApiResponseFail(int responseCode);
 
         //return catch error message
         void onApiRequestFail(String errorMsg);
+    }
+
+    interface RequestDataCallBack<T> {
+        void onDataReceived(T data);
+
+        void onDataReceiveFail(String errorMessage);
     }
 }

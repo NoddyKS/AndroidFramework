@@ -18,7 +18,7 @@ public class AsyncTask_Sample extends ConnectionAsyncTask {
 
     private  final String mSpectificationQueryError = "BaseQuerySpectification query error: ";
 
-    protected AsyncTask_Sample(Application application, CallbackContract.ConnectionCallback callback, BaseQuerySpecification spectification) {
+    public AsyncTask_Sample(Application application, CallbackContract.ConnectionCallback callback, BaseQuerySpecification spectification) {
         super(application, spectification);
         mCallback = callback;
     }

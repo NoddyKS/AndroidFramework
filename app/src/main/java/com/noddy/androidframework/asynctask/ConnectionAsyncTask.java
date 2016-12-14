@@ -21,6 +21,8 @@ public abstract class ConnectionAsyncTask extends android.os.AsyncTask<Object, O
     private static final String TAG = "RcConnectionAsyncTask";
     private final int DEFAULT_RETRY_QUERY = Configs.NUM_TO_TRY_TO_CONNECT;
     private final int TIME_WAIT = Configs.SECOND_TO_WAIT_IF_CONNECT_FAILS * 1000;
+    private int mTimeout =Configs.HTTP_CONNECT_TIMEOUT;
+
 
     private int mNumberToRetryQuery = DEFAULT_RETRY_QUERY;
 
@@ -47,6 +49,10 @@ public abstract class ConnectionAsyncTask extends android.os.AsyncTask<Object, O
 
     public void setmNumberToRetryQuery(int mNumberToRetryQuery) {
         this.mNumberToRetryQuery = mNumberToRetryQuery;
+    }
+
+    public void setTimeoutlimit(int timeout) {
+        this.mTimeout = mNumberToRetryQuery;
     }
 
     public abstract Object onApiRequest();
