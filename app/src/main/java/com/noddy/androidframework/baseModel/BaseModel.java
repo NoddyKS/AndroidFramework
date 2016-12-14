@@ -46,7 +46,7 @@ public abstract class BaseModel<T extends Entity> {
 
     public BaseModel(Application application) {
         mApplication = checkNotNull(application, "RcBaseModel: application cannot be null!");
-        mOAuthAoken = checkNotNull(onTokenSetUp(), "RcBaseModel: repository cannot be null!");
+        mOAuthAoken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
 
         mRepository = checkNotNull(onRepositorySetUp(), "RcBaseModel: repository cannot be null!");
 
