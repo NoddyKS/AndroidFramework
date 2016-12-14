@@ -36,6 +36,11 @@ public class Presenter implements Contracts.Presenter{
     public void end() {
     }
 
+    public void getDevelopment() {
+
+        mModel.getSingleData();
+    }
+
     public void getDevelopments() {
 
         mModel.getListData(false);

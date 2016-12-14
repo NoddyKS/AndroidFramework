@@ -8,7 +8,7 @@ import com.noddy.androidframework.repository.entityHolder.EntityHolder;
 
 public interface Contracts {
 
-    public  interface  Presenter{
+    interface Presenter {
         void start();
 
         void end();
@@ -20,4 +20,15 @@ public interface Contracts {
         void receivedCustomData(Object object);
     }
 
+    interface BaseModel {
+        void start();
+
+        void end();
+
+        void receivedSingleEntity(EntityHolder entityHolder);
+
+        void receivedEntitys(EntityHolder entityHolder);
+
+        void receivedCustomData(Object object);
+    }
 }

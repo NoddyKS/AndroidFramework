@@ -30,10 +30,6 @@ public abstract class BaseModel<T extends Entity> {
 
     private String mOAuthAoken;
 
-    private String mGetListUrl;
-
-    private String mGetSingleListUrl;
-
     public abstract BaseRepository onRepositorySetUp();
 
     public abstract String onTokenSetUp();
@@ -104,7 +100,7 @@ public abstract class BaseModel<T extends Entity> {
 
             @Override
             public void onApiResponseFail(int responseCode) {
-                receiveSingleData(responseCode, null);
+                receiveListData(responseCode, null);
             }
 
             @Override

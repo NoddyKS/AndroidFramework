@@ -48,12 +48,9 @@ public class SampleModel extends BaseModel<DevelopmentObject> {
     @Override
     public void onSingleDataReceived(int responseCode, Object data) {
         if (data instanceof EntityHolder) {
-
             EntityHolder entityHolder = (EntityHolder) data;
             mPresenter.receivedSingleEntity(entityHolder);
         }
-
-
     }
 
     @Override
