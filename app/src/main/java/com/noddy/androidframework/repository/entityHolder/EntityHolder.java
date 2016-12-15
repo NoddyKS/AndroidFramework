@@ -90,7 +90,7 @@ public class EntityHolder<T> implements Serializable {//JsonContainer
             if (holder.results != null && holder.results.length > 0) {
                 if(this.results!=null){
                     for (T p : holder.results) {
-                        append(this.results, p);
+                        this.results = append(this.results, p);
                     }
                 }else{
                     this.results = holder.results;
