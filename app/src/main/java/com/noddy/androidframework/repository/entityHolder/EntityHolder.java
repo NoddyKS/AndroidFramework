@@ -100,7 +100,8 @@ public class EntityHolder<T> implements Serializable {//JsonContainer
     }
 
     public void clear() {
-        clearArray(results);
+        if (results != null)
+            clearArray(results);
         canRequestMore = false;
         offset = 0;//end +1
         zoom = 0;
