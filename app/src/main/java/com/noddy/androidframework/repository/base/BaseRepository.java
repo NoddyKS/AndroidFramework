@@ -16,14 +16,14 @@ import static com.noddy.androidframework.Until.checkNotNull;
 
 public class BaseRepository {
 
-    private Object mEntityContract;
+    private Object mEntity;
 
     private BaseModel mModel;
 
     private Application mApplication;
 
     public BaseRepository(Application application, Object entity,BaseModel model){
-        mEntityContract = checkNotNull(entity, "BaseRepository: entityClass cannot be null!");
+        mEntity = checkNotNull(entity, "BaseRepository: entityClass cannot be null!");
         mModel= checkNotNull(model, "BaseRepository: model cannot be null!");
         mApplication= checkNotNull(application, "BaseRepository: application cannot be null!");
         //check entry object can't be EntityContract object
@@ -33,7 +33,7 @@ public class BaseRepository {
     }
 
     public void getData(String url, final CallbackContract.ConnectionCallback callBack){
-        AsyncTask_Sample async_sample= new AsyncTask_Sample(mApplication, callBack, new GetQuerySpectification(url,mModel.getmOAuthAoken(),mEntityContract.getClass().getName()));
+        AsyncTask_Sample async_sample= new AsyncTask_Sample(mApplication, callBack, new GetQuerySpectification(url,mModel.getmOAuthAoken(), mEntity.getClass().getName()));
 
         async_sample.setmNumberToRetryQuery(3);//set number to try query times
         async_sample.setTimeoutlimit(15000); //set timeout connect mini seconds

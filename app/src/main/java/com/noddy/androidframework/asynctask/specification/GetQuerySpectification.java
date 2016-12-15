@@ -40,6 +40,7 @@ public class GetQuerySpectification extends BaseQuerySpecification {
         mQueryUrl = checkNotNull(queryUrl, "GetQuerySpectification: queryUrl cannot be null!");
         mToken = checkNotNull(token, "GetQuerySpectification: token cannot be null!");
         mClassName = checkNotNull(className, "GetQuerySpectification: className cannot be null!");
+        mDateFormat = mDefaultDateFormatForJson;
     }
 
     public GetQuerySpectification(String queryUrl, String token, String className, String dateFormat) {

@@ -76,6 +76,7 @@ public class EntityHolder<T> implements Serializable {//JsonContainer
         this.end = end;
     }
 
+
     public void merge(EntityHolder<T> holder){
         try{
             this.total = holder.total;

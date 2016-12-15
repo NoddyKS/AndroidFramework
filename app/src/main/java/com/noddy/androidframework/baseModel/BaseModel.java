@@ -22,7 +22,7 @@ import static com.noddy.androidframework.Until.checkNotNull;
 
 public abstract class BaseModel<T extends Entity> {
 
-    private EntityHolder<T> mEntityHolder;
+    private EntityHolder mEntityHolder;
 
     private BaseRepository mRepository;
 
@@ -44,13 +44,15 @@ public abstract class BaseModel<T extends Entity> {
 
     public abstract void onCustomQueryReceived(int resultCode, Object data);
 
+    public abstract void onDataQueryFail(String failMsg);
+
     public BaseModel(Application application) {
         mApplication = checkNotNull(application, "RcBaseModel: application cannot be null!");
         mOAuthAoken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
 
         mRepository = checkNotNull(onRepositorySetUp(), "RcBaseModel: repository cannot be null!");
 
-        mEntityHolder = new EntityHolder<>();
+        mEntityHolder = new EntityHolder();
     }
 
     public String getmOAuthAoken() {
@@ -68,7 +70,7 @@ public abstract class BaseModel<T extends Entity> {
 
         mRepository.getData(urlWithOutPaging, new CallbackContract.ConnectionCallback() {
             @Override
-            public void onApiResponseSuccess(int responseCode, Object data) {//entityholder
+            public void onApiResponseSuccess(int responseCode, Object data) {//entity
                 receiveSingleData(responseCode, data);
             }
 
@@ -95,7 +97,11 @@ public abstract class BaseModel<T extends Entity> {
         mRepository.getData(urlWithOutPaging, new CallbackContract.ConnectionCallback() {
             @Override
             public void onApiResponseSuccess(int responseCode, Object data) {//entityholder
-                receiveListData(responseCode, data);
+                if(responseCode != HttpURLConnection.HTTP_OK|| data==null) {
+                    onDataQueryFail("coding fail");
+                }else{
+                    receiveListData(responseCode, data);
+                }
             }
 
             @Override
@@ -105,6 +111,7 @@ public abstract class BaseModel<T extends Entity> {
 
             @Override
             public void onApiRequestFail(String errorMsg) {
+                onDataQueryFail(errorMsg);
                 //coding fail
             }
         });
@@ -119,7 +126,8 @@ public abstract class BaseModel<T extends Entity> {
 
     }
 
-    public void receiveSingleData(int resultCode, Object data) {
+    private void receiveSingleData(int resultCode, Object data) {
+
         if (data instanceof EntityHolder) {
 
             EntityHolder entityHolder = (EntityHolder) data;
@@ -130,14 +138,15 @@ public abstract class BaseModel<T extends Entity> {
         }
     }
 
-    public void receiveListData(int resultCode, Object data) {
+    private void receiveListData(int resultCode, Object data) {
         if (data instanceof EntityHolder) {
             EntityHolder entityHolder = (EntityHolder) data;
 
             boolean isResultOK = resultCode == HttpURLConnection.HTTP_OK;
             boolean canRequest = false;
             try {
-                if (isResultOK && entityHolder != null) {
+                if (isResultOK) {
+
                     entityHolder.setResults(null);//clear returned data
                     entityHolder.merge(entityHolder);
                 }

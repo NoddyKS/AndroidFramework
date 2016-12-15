@@ -54,6 +54,11 @@ public class SampleModel extends BaseModel<DevelopmentObject> {
     }
 
     @Override
+    public void onDataQueryFail(String failMsg) {
+
+    }
+
+    @Override
     public void onListDataReceived(int responseCode, Object data) {//receive ResultSetObject type data
         if (data instanceof EntityHolder) {
 
