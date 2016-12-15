@@ -147,17 +147,15 @@ public abstract class BaseModel<T extends Entity> {
 
             try {
                 if (isResultOK) {
-
-                    //mEntityHolder.clear();//clear returned data
+                    //merge received form api entity holder
                     updatedHolder =mEntityHolder.merge(entityHolder);
-
                 }
             } catch (Exception e) {
                 Log.d("Tag", e.getMessage());
 
             } finally {
                 if(updatedHolder){
-                    onListDataReceived(resultCode,entityHolder);
+                    onListDataReceived(resultCode,mEntityHolder);
                 }else{
                     onDataQueryFail("merage/update holder fail");
                 }
