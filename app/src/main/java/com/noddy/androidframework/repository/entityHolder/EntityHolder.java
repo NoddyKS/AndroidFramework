@@ -97,11 +97,11 @@ public class EntityHolder<T> implements Serializable {//JsonContainer
                 }
 
             }
-            return true;//success merge
+            return true;//success merge EntityHolder
         } catch (Exception e) {
 
         }
-        return false;//success merge
+        return false;//fail merge EntityHolder
     }
 
     public void clear() {

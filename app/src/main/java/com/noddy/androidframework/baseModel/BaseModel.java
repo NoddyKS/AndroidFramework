@@ -148,7 +148,7 @@ public abstract class BaseModel<T extends Entity> {
             try {
                 if (isResultOK) {
 
-                    mEntityHolder.clear();//clear returned data
+                    //mEntityHolder.clear();//clear returned data
                     updatedHolder =mEntityHolder.merge(entityHolder);
 
                 }
