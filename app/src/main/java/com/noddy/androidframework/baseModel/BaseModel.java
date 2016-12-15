@@ -88,7 +88,7 @@ public abstract class BaseModel<T extends Entity> {
 
     public void getListData(boolean getMoreList) {
         if (!getMoreList)//clear entity list holder
-            mEntityHolder = new EntityHolder<>();
+            mEntityHolder.clear();
 
         String urlWithOutPaging = getListUrl();
 
@@ -139,25 +139,33 @@ public abstract class BaseModel<T extends Entity> {
     }
 
     private void receiveListData(int resultCode, Object data) {
+        boolean updatedHolder = false;
         if (data instanceof EntityHolder) {
             EntityHolder entityHolder = (EntityHolder) data;
 
             boolean isResultOK = resultCode == HttpURLConnection.HTTP_OK;
-            boolean canRequest = false;
+
             try {
                 if (isResultOK) {
 
-                    entityHolder.setResults(null);//clear returned data
-                    entityHolder.merge(entityHolder);
+                    mEntityHolder.clear();//clear returned data
+                    updatedHolder =mEntityHolder.merge(entityHolder);
+
                 }
             } catch (Exception e) {
                 Log.d("Tag", e.getMessage());
 
             } finally {
-                onListDataReceived(resultCode,entityHolder);
+                if(updatedHolder){
+                    onListDataReceived(resultCode,entityHolder);
+                }else{
+                    onDataQueryFail("merage/update holder fail");
+                }
             }
         } else {
-            onCustomQueryReceived(resultCode, data);
+
+                onCustomQueryReceived(resultCode, data);
+
         }
     }
 

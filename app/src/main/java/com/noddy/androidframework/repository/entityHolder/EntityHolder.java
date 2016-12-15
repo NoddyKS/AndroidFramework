@@ -77,23 +77,44 @@ public class EntityHolder<T> implements Serializable {//JsonContainer
     }
 
 
-    public void merge(EntityHolder<T> holder){
-        try{
+    public boolean merge(EntityHolder<T> holder) {
+
+        try {
             this.total = holder.total;
             this.offset = holder.end + 1;
             this.page = holder.page;
             this.numPages = holder.numPages;
 
-            this.canRequestMore = holder.page!= holder.numPages;
+            this.canRequestMore = holder.page != holder.numPages;
 
             if (holder.results != null && holder.results.length > 0) {
                 for (T p : holder.results) {
-                    append(this.results,p);
+                    append(this.results, p);
                 }
             }
-        }catch (Exception e){
+            return true;//success merge
+        } catch (Exception e) {
 
         }
+        return false;//success merge
+    }
+
+    public void clear() {
+        clearArray(results);
+        canRequestMore = false;
+        offset = 0;//end +1
+        zoom = 0;
+        page = 0;
+        numPages = 0;
+        pageSize = 0;
+        start = 0;
+        end = 0;
+        total = 0;
+    }
+
+    private <T> T[] clearArray(T[] arr) {
+        arr = Arrays.copyOf(arr, 0);
+        return arr;
     }
 
     private <T> T[] append(T[] arr, T element) {
