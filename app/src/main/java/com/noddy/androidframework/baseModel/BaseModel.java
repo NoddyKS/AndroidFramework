@@ -116,9 +116,15 @@ public abstract class BaseModel<T extends Entity> {
         if (!getMoreList)//clear entity list holder
             mEntityHolder.clear();
 
+        if(mEntityHolder!=null&&!mEntityHolder.isCanRequestMore()){
+            onDataQueryFail("can't get more lsit data (page == numPages)");
+            return;
+        }
+
         String urlWithOutPaging = getListUrl();
 
         urlWithOutPaging += generatePagingPara();//add pag
+
 
         mRepository.getData(urlWithOutPaging,mEntityHolderClass, new CallbackContract.ConnectionCallback() {
             @Override
