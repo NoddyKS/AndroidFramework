@@ -30,6 +30,8 @@ public abstract class BaseModel<T extends Entity> {
 
     private String mOAuthAoken;
 
+    private Class mEntityHolderClass;
+
     public abstract BaseRepository onRepositorySetUp();
 
     public abstract String onTokenSetUp();
@@ -37,6 +39,8 @@ public abstract class BaseModel<T extends Entity> {
     public abstract String getListUrl();
 
     public abstract String getSingleUrl();
+
+    public abstract String getPostUrl();
 
     public abstract void onSingleDataReceived(int resultCode, Object data);
 
@@ -46,11 +50,13 @@ public abstract class BaseModel<T extends Entity> {
 
     public abstract void onDataQueryFail(String failMsg);
 
-    public BaseModel(Application application) {
+    public BaseModel(Application application,Class entityHolderName) {
         mApplication = checkNotNull(application, "RcBaseModel: application cannot be null!");
         mOAuthAoken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
 
         mRepository = checkNotNull(onRepositorySetUp(), "RcBaseModel: repository cannot be null!");
+
+        mEntityHolderClass = checkNotNull(entityHolderName, "RcBaseModel: entityHolderName cannot be null!");
 
         mEntityHolder = new EntityHolder();
     }
@@ -63,12 +69,32 @@ public abstract class BaseModel<T extends Entity> {
         return mApplication;
     }
 
+    public void postData(Object data) {
+        String postUrl = getPostUrl();
+        mRepository.postData(postUrl,data, new CallbackContract.ConnectionCallback() {
+            @Override
+            public void onApiResponseSuccess(int responseCode, Object data) {//entity
+                receiveSingleData(responseCode, data);
+            }
+
+            @Override
+            public void onApiResponseFail(int responseCode) {
+                receiveSingleData(responseCode, null);
+            }
+
+            @Override
+            public void onApiRequestFail(String errorMsg) {
+                //coding fail
+            }
+        });
+
+    }
 
     public void getSingleData() {
 
         String urlWithOutPaging = getSingleUrl();
 
-        mRepository.getData(urlWithOutPaging, new CallbackContract.ConnectionCallback() {
+        mRepository.getData(urlWithOutPaging,mEntityHolderClass, new CallbackContract.ConnectionCallback() {
             @Override
             public void onApiResponseSuccess(int responseCode, Object data) {//entity
                 receiveSingleData(responseCode, data);
@@ -94,7 +120,7 @@ public abstract class BaseModel<T extends Entity> {
 
         urlWithOutPaging += generatePagingPara();//add pag
 
-        mRepository.getData(urlWithOutPaging, new CallbackContract.ConnectionCallback() {
+        mRepository.getData(urlWithOutPaging,mEntityHolderClass, new CallbackContract.ConnectionCallback() {
             @Override
             public void onApiResponseSuccess(int responseCode, Object data) {//entityholder
                 if(responseCode != HttpURLConnection.HTTP_OK|| data==null) {

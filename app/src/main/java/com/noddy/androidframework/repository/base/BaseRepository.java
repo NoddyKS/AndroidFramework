@@ -5,6 +5,8 @@ import android.app.Application;
 import com.noddy.androidframework.asynctask.contracts.CallbackContract;
 import com.noddy.androidframework.asynctask.specification.GetQuerySpectification;
 import com.noddy.androidframework.asynctask.contracts.Entity;
+import com.noddy.androidframework.asynctask.specification.PostQuerySpectification;
+import com.noddy.androidframework.asynctask.specification.base.BaseQuerySpecification;
 import com.noddy.androidframework.baseModel.BaseModel;
 import com.noddy.androidframework.sample.asynctask.AsyncTask_Sample;
 
@@ -16,28 +18,44 @@ import static com.noddy.androidframework.Until.checkNotNull;
 
 public class BaseRepository {
 
-    private Object mEntity;
-
     private BaseModel mModel;
 
     private Application mApplication;
 
-    public BaseRepository(Application application, Object entity,BaseModel model){
-        mEntity = checkNotNull(entity, "BaseRepository: entityClass cannot be null!");
+    private int mRetryQuery = 3 , mTimeOut = 3*1000;
+
+    public BaseRepository(Application application,BaseModel model){
+
         mModel= checkNotNull(model, "BaseRepository: model cannot be null!");
         mApplication= checkNotNull(application, "BaseRepository: application cannot be null!");
         //check entry object can't be EntityContract object
-        if(entity.getClass().getName().equals(Entity.class.getName()))
-            throw new ClassCastException(" can't not be EntityContract");
+
 
     }
 
-    public void getData(String url, final CallbackContract.ConnectionCallback callBack){
-        AsyncTask_Sample async_sample= new AsyncTask_Sample(mApplication, callBack, new GetQuerySpectification(url,mModel.getmOAuthAoken(), mEntity.getClass().getName()));
+    public void setRetryQuery(int retryQuery) {
+        this.mRetryQuery = retryQuery;
+    }
 
-        async_sample.setmNumberToRetryQuery(3);//set number to try query times
-        async_sample.setTimeoutlimit(15000); //set timeout connect mini seconds
+    public void setTimeOut(int timeOut) {
+        this.mTimeOut = timeOut;
+    }
+
+    public void getData(String url,Class entityHolder ,final CallbackContract.ConnectionCallback callBack){
+        GetQuerySpectification  specification = new GetQuerySpectification(url,mModel.getmOAuthAoken(), entityHolder);
+        executeQuery(specification,callBack);
+    }
+
+    public void postData(String url,Object objectForUpload ,final CallbackContract.ConnectionCallback callBack){
+        PostQuerySpectification  specification = new PostQuerySpectification(url,mModel.getmOAuthAoken(), objectForUpload);
+        executeQuery(specification,callBack);
+    }
+
+    private void executeQuery(BaseQuerySpecification specification,CallbackContract.ConnectionCallback callBack){
+        // specification = what to do query , callBack = what to do when response
+        AsyncTask_Sample async_sample= new AsyncTask_Sample(mApplication, callBack, specification);
+        async_sample.setmNumberToRetryQuery(mRetryQuery);//set number to try query times
+        async_sample.setTimeoutlimit(mTimeOut); //set timeout connect mini seconds
         async_sample.execute();
     }
-
 }

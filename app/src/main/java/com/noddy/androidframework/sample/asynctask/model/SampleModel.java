@@ -21,7 +21,7 @@ public class SampleModel extends BaseModel<DevelopmentObject> {
     private  Presenter mPresenter;
 
     public SampleModel(Application application , Presenter presenter) {
-        super(application);
+        super(application,DevelopmentHolder.class);
         mPresenter =presenter;
     }
 
@@ -36,13 +36,20 @@ public class SampleModel extends BaseModel<DevelopmentObject> {
     }
 
     @Override
+    public String getPostUrl() {
+        return null;
+    }
+
+    @Override
     public String onTokenSetUp() {
         return "token";
     }
 
+
+
     @Override
     public BaseRepository onRepositorySetUp() {
-        return new BaseRepository(getApplication(),new DevelopmentHolder(),this);
+        return new BaseRepository(getApplication(),this);
     }
 
     @Override

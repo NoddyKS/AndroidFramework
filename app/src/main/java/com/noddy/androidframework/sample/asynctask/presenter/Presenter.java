@@ -46,6 +46,11 @@ public class Presenter implements Contracts.Presenter{
         mModel.getListData(false);
     }
 
+    public void postDevelopments() {
+
+        mModel.postData(new EntityHolder<>());
+    }
+
     @Override
     public void receivedSingleEntity(EntityHolder data) {
         Toast.makeText(mModel.getApplication(), "get receivedSingleEntity success", Toast.LENGTH_SHORT).show();

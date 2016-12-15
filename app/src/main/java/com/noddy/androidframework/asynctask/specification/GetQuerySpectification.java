@@ -31,37 +31,39 @@ import static com.noddy.androidframework.Until.checkNotNull;
 public class GetQuerySpectification extends BaseQuerySpecification {
     private final String TAG = getClass().getName();
 
-    private String mQueryUrl, mToken, mClassName, mDateFormat;
+    private String mQueryUrl, mToken,mDateFormat;
+
+    private Class mEntityClass;
 
     private final String mDefaultDateFormatForJson = "yyyy-MM-dd'T'HH:mm:ss";
 
-    public GetQuerySpectification(String queryUrl, String token, String className) {
+    public GetQuerySpectification(String queryUrl, String token, Class className) {
 
         mQueryUrl = checkNotNull(queryUrl, "GetQuerySpectification: queryUrl cannot be null!");
         mToken = checkNotNull(token, "GetQuerySpectification: token cannot be null!");
-        mClassName = checkNotNull(className, "GetQuerySpectification: className cannot be null!");
+        mEntityClass = checkNotNull(className, "GetQuerySpectification: className cannot be null!");
         mDateFormat = mDefaultDateFormatForJson;
     }
 
-    public GetQuerySpectification(String queryUrl, String token, String className, String dateFormat) {
+    public GetQuerySpectification(String queryUrl, String token, Class className, String dateFormat) {
 
         mQueryUrl = checkNotNull(queryUrl, "GetQuerySpectification: queryUrl cannot be null!");
         mToken = checkNotNull(token, "GetQuerySpectification: token cannot be null!");
-        mClassName = checkNotNull(className, "GetQuerySpectification: className cannot be null!");
+        mEntityClass = checkNotNull(className, "GetQuerySpectification: className cannot be null!");
         mDateFormat = (dateFormat == null) ? mDefaultDateFormatForJson : dateFormat;
     }
 
     @Override
     public Object onQuery() {
-        return getContent(mQueryUrl, mClassName, mToken);
+        return getContent(mQueryUrl, mEntityClass, mToken);
     }
 
-    private Object getContent(String url, String className, String token) {
+    private Object getContent(String url, Class className, String token) {
         try {
             String content = getResult(url, token);
             Gson gson = new GsonBuilder().setDateFormat(mDateFormat).create();
 
-            return gson.fromJson(content, Class.forName(className));
+            return gson.fromJson(content, className);
 
         } catch (Exception e) {
             Log.d(TAG, "Connection getContent fail: "+e.getMessage());
@@ -113,5 +115,4 @@ public class GetQuerySpectification extends BaseQuerySpecification {
         }
         return null;
     }
-
 }
