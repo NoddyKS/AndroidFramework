@@ -5,10 +5,12 @@ import android.util.Log;
 
 import com.noddy.androidframework.asynctask.contracts.CallbackContract;
 import com.noddy.androidframework.asynctask.contracts.Entity;
+import com.noddy.androidframework.asynctask.specification.base.BaseQuerySpecification;
 import com.noddy.androidframework.config.Configs;
 import com.noddy.androidframework.repository.ResultSetObject;
 import com.noddy.androidframework.repository.base.BaseRepository;
 import com.noddy.androidframework.repository.entityHolder.EntityHolder;
+import com.noddy.androidframework.sample.asynctask.AsyncTask_With_CallBack;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -46,11 +48,13 @@ public abstract class BaseModel<T extends Entity> {
 
     public abstract void onListDataReceived(int resultCode, Object data);
 
+    public abstract void onPostResultReceived(int resultCode, Object data);
+
     public abstract void onCustomQueryReceived(int resultCode, Object data);
 
     public abstract void onDataQueryFail(String failMsg);
 
-    public BaseModel(Application application,Class entityHolderName) {
+    public BaseModel(Application application, Class entityHolderName) {
         mApplication = checkNotNull(application, "RcBaseModel: application cannot be null!");
         mOAuthAoken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
 
@@ -71,19 +75,20 @@ public abstract class BaseModel<T extends Entity> {
 
     public void postData(Object data) {
         String postUrl = getPostUrl();
-        mRepository.postData(postUrl,data, new CallbackContract.ConnectionCallback() {
+        mRepository.postData(postUrl, data, new CallbackContract.ConnectionCallback() {
             @Override
             public void onApiResponseSuccess(int responseCode, Object data) {//entity
-                receiveSingleData(responseCode, data);
+                onPostResultReceived(responseCode, data);
             }
 
             @Override
             public void onApiResponseFail(int responseCode) {
-                receiveSingleData(responseCode, null);
+                onPostResultReceived(responseCode, null);
             }
 
             @Override
             public void onApiRequestFail(String errorMsg) {
+                onDataQueryFail(errorMsg);
                 //coding fail
             }
         });
@@ -94,7 +99,7 @@ public abstract class BaseModel<T extends Entity> {
 
         String urlWithOutPaging = getSingleUrl();
 
-        mRepository.getData(urlWithOutPaging,mEntityHolderClass, new CallbackContract.ConnectionCallback() {
+        mRepository.getData(urlWithOutPaging, mEntityHolderClass, new CallbackContract.ConnectionCallback() {
             @Override
             public void onApiResponseSuccess(int responseCode, Object data) {//entity
                 receiveSingleData(responseCode, data);
@@ -116,7 +121,7 @@ public abstract class BaseModel<T extends Entity> {
         if (!getMoreList)//clear entity list holder
             mEntityHolder.clear();
 
-        if(mEntityHolder!=null&&!mEntityHolder.isCanRequestMore()){
+        if (mEntityHolder != null && !mEntityHolder.isCanRequestMore()) {
             onDataQueryFail("can't get more lsit data (page == numPages)");
             return;
         }
@@ -126,12 +131,12 @@ public abstract class BaseModel<T extends Entity> {
         urlWithOutPaging += generatePagingPara();//add pag
 
 
-        mRepository.getData(urlWithOutPaging,mEntityHolderClass, new CallbackContract.ConnectionCallback() {
+        mRepository.getData(urlWithOutPaging, mEntityHolderClass, new CallbackContract.ConnectionCallback() {
             @Override
             public void onApiResponseSuccess(int responseCode, Object data) {//entityholder
-                if(responseCode != HttpURLConnection.HTTP_OK|| data==null) {
+                if (responseCode != HttpURLConnection.HTTP_OK || data == null) {
                     onDataQueryFail("coding fail");
-                }else{
+                } else {
                     receiveListData(responseCode, data);
                 }
             }
@@ -154,8 +159,18 @@ public abstract class BaseModel<T extends Entity> {
         return paginPara;
     }
 
-    public void customQuery() {
+    public void customQuery(CallbackContract.ConnectionCallback callBack, BaseQuerySpecification specification) {
+        customQuery(callBack,specification,0,0);
+    }
 
+    public void customQuery(CallbackContract.ConnectionCallback callBack, BaseQuerySpecification specification,int retryQuery,int secondOfTimeout) {
+        // specification = what to do query , callBack = what to do when response
+        AsyncTask_With_CallBack async_sample= new AsyncTask_With_CallBack(mApplication, callBack, specification);
+        if(retryQuery>0)//at last 1 times
+            async_sample.setmNumberToRetryQuery(retryQuery);//set number to try query times
+        if(secondOfTimeout>5000)//at last 5 seconds
+            async_sample.setTimeoutlimit(secondOfTimeout); //set timeout connect mini seconds
+        async_sample.execute();
     }
 
     private void receiveSingleData(int resultCode, Object data) {
@@ -180,21 +195,21 @@ public abstract class BaseModel<T extends Entity> {
             try {
                 if (isResultOK) {
                     //merge received form api entity holder
-                    updatedHolder =mEntityHolder.merge(entityHolder);
+                    updatedHolder = mEntityHolder.merge(entityHolder);
                 }
             } catch (Exception e) {
                 Log.d("Tag", e.getMessage());
 
             } finally {
-                if(updatedHolder){
-                    onListDataReceived(resultCode,mEntityHolder);
-                }else{
+                if (updatedHolder) {
+                    onListDataReceived(resultCode, mEntityHolder);
+                } else {
                     onDataQueryFail("merage/update holder fail");
                 }
             }
         } else {
 
-                onCustomQueryReceived(resultCode, data);
+            onCustomQueryReceived(resultCode, data);
 
         }
     }

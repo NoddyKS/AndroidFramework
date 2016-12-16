@@ -12,23 +12,19 @@ import java.net.HttpURLConnection;
  * Created by NoddyLaw on 2016/12/5.
  */
 
-public class AsyncTask_Sample extends ConnectionAsyncTask {
+public class AsyncTask_With_CallBack extends ConnectionAsyncTask {
 
     private CallbackContract.ConnectionCallback mCallback;
 
     private  final String mSpectificationQueryError = "BaseQuerySpectification query error: ";
 
-    public AsyncTask_Sample(Application application, CallbackContract.ConnectionCallback callback, BaseQuerySpecification spectification) {
+    public AsyncTask_With_CallBack(Application application, CallbackContract.ConnectionCallback callback, BaseQuerySpecification spectification) {
         super(application, spectification);
         mCallback = callback;
     }
 
     public CallbackContract.ConnectionCallback getCallback() {
         return mCallback;
-    }
-
-    public void setmCallback(CallbackContract.ConnectionCallback mCallback) {
-        this.mCallback = mCallback;
     }
 
     @Override

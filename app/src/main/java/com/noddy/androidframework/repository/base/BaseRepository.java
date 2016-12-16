@@ -4,11 +4,10 @@ import android.app.Application;
 
 import com.noddy.androidframework.asynctask.contracts.CallbackContract;
 import com.noddy.androidframework.asynctask.specification.GetQuerySpectification;
-import com.noddy.androidframework.asynctask.contracts.Entity;
 import com.noddy.androidframework.asynctask.specification.PostQuerySpectification;
 import com.noddy.androidframework.asynctask.specification.base.BaseQuerySpecification;
 import com.noddy.androidframework.baseModel.BaseModel;
-import com.noddy.androidframework.sample.asynctask.AsyncTask_Sample;
+import com.noddy.androidframework.sample.asynctask.AsyncTask_With_CallBack;
 
 import static com.noddy.androidframework.Until.checkNotNull;
 
@@ -53,7 +52,7 @@ public class BaseRepository {
 
     private void executeQuery(BaseQuerySpecification specification,CallbackContract.ConnectionCallback callBack){
         // specification = what to do query , callBack = what to do when response
-        AsyncTask_Sample async_sample= new AsyncTask_Sample(mApplication, callBack, specification);
+        AsyncTask_With_CallBack async_sample= new AsyncTask_With_CallBack(mApplication, callBack, specification);
         async_sample.setmNumberToRetryQuery(mRetryQuery);//set number to try query times
         async_sample.setTimeoutlimit(mTimeOut); //set timeout connect mini seconds
         async_sample.execute();
