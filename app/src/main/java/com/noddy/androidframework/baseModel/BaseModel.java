@@ -114,6 +114,7 @@ public abstract class BaseModel<T extends Entity> {
 
             @Override
             public void onApiRequestFail(String errorMsg) {
+                onDataQueryFail(errorMsg);
                 //coding fail
             }
         });
