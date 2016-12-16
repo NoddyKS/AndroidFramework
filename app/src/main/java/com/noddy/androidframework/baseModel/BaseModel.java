@@ -119,7 +119,7 @@ public abstract class BaseModel<T extends Entity> {
         if (!getMoreList)//clear entity list holder
             mEntityHolder.clear();
 
-        if (mEntityHolder != null && !mEntityHolder.isCanRequestMore()) {
+        if (mEntityHolder != null && !mEntityHolder.isCanRequestMore()&&mEntityHolder.getResults().length>0) {
             onDataQueryFail("can't get more lsit data (page == numPages)");
             return;
         }
