@@ -26,6 +26,11 @@ public class SampleModel extends BaseModel<DevelopmentObject> {
     }
 
     @Override
+    public void onPostResultReceived(int resultCode, Object data) {
+
+    }
+
+    @Override
     public String getListUrl() {
         return new DevelopmentObject().getListUrl();
     }

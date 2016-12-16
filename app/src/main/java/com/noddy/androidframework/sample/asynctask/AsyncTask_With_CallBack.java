@@ -44,7 +44,10 @@ public class AsyncTask_With_CallBack extends ConnectionAsyncTask {
 
             if (responseCode != HttpURLConnection.HTTP_OK) {
                 mCallback.onApiResponseFail(responseCode);
-            } else {
+            }else if(responseCode ==0 && result!=null && result instanceof  String){
+                mCallback.onApiRequestFail((String)result);
+            }
+            else {
                 mCallback.onApiResponseSuccess(responseCode, result);
             }
         }catch (Exception e){

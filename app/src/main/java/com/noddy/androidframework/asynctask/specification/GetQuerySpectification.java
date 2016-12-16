@@ -31,7 +31,7 @@ import static com.noddy.androidframework.Until.checkNotNull;
 public class GetQuerySpectification extends BaseQuerySpecification {
     private final String TAG = getClass().getName();
 
-    private String mQueryUrl, mToken,mDateFormat;
+    private String mQueryUrl, mToken, mDateFormat;
 
     private Class mEntityClass;
 
@@ -66,7 +66,7 @@ public class GetQuerySpectification extends BaseQuerySpecification {
             return gson.fromJson(content, className);
 
         } catch (Exception e) {
-            Log.d(TAG, "Connection getContent fail: "+e.getMessage());
+            Log.d(TAG, "Connection getContent fail: " + e.getMessage());
             String s = e.getMessage();
             return null;
         }
@@ -106,13 +106,22 @@ public class GetQuerySpectification extends BaseQuerySpecification {
 
         } catch (HttpException sex) {
             Log.d("runtime", "Connection-getResult-error HttpException msg:" + sex.getMessage());
+            setErrorMsg();
         } catch (SocketTimeoutException stex) {
             Log.d("runtime", "Connection-getResult-error SocketTimeoutException msg:" + stex.getMessage());
+            setErrorMsg();
         } catch (IOException iex) {
             Log.d("runtime", "Connection-getResult-error IOException msg:" + iex.getMessage());
+            setErrorMsg();
         } catch (Exception ex) {
             Log.d("runtime", "Connection-getResult-error Exception msg:" + ex.getMessage());
+            setErrorMsg();
         }
         return null;
+    }
+
+    private void setErrorMsg() {
+        setResponseCode(0);
+        setResponseMsg("plase check your url / token ,whether is correct !");
     }
 }

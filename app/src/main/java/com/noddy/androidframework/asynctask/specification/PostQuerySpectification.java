@@ -98,6 +98,8 @@ public class PostQuerySpectification extends BaseQuerySpecification {
             }
 
         } catch (Exception ex) {
+            setResponseCode(0);
+            setResponseMsg("plase check your url / token ,whether is correct !");
             Log.d("", ex.getMessage());
             return false;
         }
