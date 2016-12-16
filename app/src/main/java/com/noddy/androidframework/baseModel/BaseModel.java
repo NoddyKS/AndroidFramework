@@ -54,9 +54,6 @@ public abstract class BaseModel<T extends Entity> {
 
     public BaseModel(Application application, Class entityHolderName) {
         mApplication = checkNotNull(application, "RcBaseModel: application cannot be null!");
-        mOAuthAoken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
-
-
 
         mEntityHolderClass = checkNotNull(entityHolderName, "RcBaseModel: entityHolderName cannot be null!");
 
@@ -78,6 +75,8 @@ public abstract class BaseModel<T extends Entity> {
     public void postData(Object data) {
         mRepository = checkNotNull(onRepositorySetUp(), "RcBaseModel: repository cannot be null!");
         String postUrl = getPostUrl();
+        mOAuthAoken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
+
         mRepository.postData(postUrl, data, new CallbackContract.ConnectionCallback() {
             @Override
             public void onApiResponseSuccess(int responseCode, Object data) {//entity
@@ -102,6 +101,8 @@ public abstract class BaseModel<T extends Entity> {
 
         String urlWithOutPaging = getSingleUrl();
         mRepository = checkNotNull(onRepositorySetUp(), "RcBaseModel: repository cannot be null!");
+        mOAuthAoken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
+
         mRepository.getData(urlWithOutPaging, mEntityHolderClass, new CallbackContract.ConnectionCallback() {
             @Override
             public void onApiResponseSuccess(int responseCode, Object data) {//entity
@@ -133,6 +134,8 @@ public abstract class BaseModel<T extends Entity> {
         String urlWithOutPaging = getListUrl();
 
         urlWithOutPaging += generatePagingPara();//add pag
+        mOAuthAoken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
+
 
         mRepository = checkNotNull(onRepositorySetUp(), "RcBaseModel: repository cannot be null!");
         mRepository.getData(urlWithOutPaging, mEntityHolderClass, new CallbackContract.ConnectionCallback() {
