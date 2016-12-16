@@ -1,9 +1,9 @@
-package com.noddy.androidframework.sample.asynctask;
+package com.noddy.androidframework.asynctask;
 
 import android.app.Application;
 
-import com.noddy.androidframework.asynctask.ConnectionAsyncTask;
-import com.noddy.androidframework.asynctask.contracts.CallbackContract;
+import com.noddy.androidframework.asynctask.base.ConnectionAsyncTask;
+import com.noddy.androidframework.contracts.CallbackContract;
 import com.noddy.androidframework.asynctask.specification.base.BaseQuerySpecification;
 
 import java.net.HttpURLConnection;

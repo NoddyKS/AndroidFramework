@@ -1,4 +1,4 @@
-package com.noddy.androidframework.asynctask;
+package com.noddy.androidframework.asynctask.base;
 
 import android.app.Application;
 import android.content.Context;

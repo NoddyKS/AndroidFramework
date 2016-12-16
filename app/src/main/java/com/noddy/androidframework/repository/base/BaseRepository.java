@@ -2,12 +2,12 @@ package com.noddy.androidframework.repository.base;
 
 import android.app.Application;
 
-import com.noddy.androidframework.asynctask.contracts.CallbackContract;
+import com.noddy.androidframework.contracts.CallbackContract;
 import com.noddy.androidframework.asynctask.specification.GetQuerySpectification;
 import com.noddy.androidframework.asynctask.specification.PostQuerySpectification;
 import com.noddy.androidframework.asynctask.specification.base.BaseQuerySpecification;
 import com.noddy.androidframework.baseModel.BaseModel;
-import com.noddy.androidframework.sample.asynctask.AsyncTask_With_CallBack;
+import com.noddy.androidframework.asynctask.AsyncTask_With_CallBack;
 
 import static com.noddy.androidframework.Until.checkNotNull;
 

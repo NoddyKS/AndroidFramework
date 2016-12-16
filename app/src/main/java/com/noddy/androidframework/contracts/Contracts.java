@@ -1,4 +1,4 @@
-package com.noddy.androidframework.asynctask.contracts;
+package com.noddy.androidframework.contracts;
 
 import com.noddy.androidframework.repository.entityHolder.EntityHolder;
 

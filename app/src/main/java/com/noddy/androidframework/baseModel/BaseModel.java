@@ -3,14 +3,14 @@ package com.noddy.androidframework.baseModel;
 import android.app.Application;
 import android.util.Log;
 
-import com.noddy.androidframework.asynctask.contracts.CallbackContract;
-import com.noddy.androidframework.asynctask.contracts.Entity;
+import com.noddy.androidframework.contracts.CallbackContract;
+import com.noddy.androidframework.contracts.Entity;
 import com.noddy.androidframework.asynctask.specification.base.BaseQuerySpecification;
 import com.noddy.androidframework.config.Configs;
 import com.noddy.androidframework.repository.ResultSetObject;
 import com.noddy.androidframework.repository.base.BaseRepository;
 import com.noddy.androidframework.repository.entityHolder.EntityHolder;
-import com.noddy.androidframework.sample.asynctask.AsyncTask_With_CallBack;
+import com.noddy.androidframework.asynctask.AsyncTask_With_CallBack;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -69,6 +69,10 @@ public abstract class BaseModel<T extends Entity> {
 
     public Application getApplication() {
         return mApplication;
+    }
+
+    public Class getEntityHolderClass() {
+        return mEntityHolderClass;
     }
 
     public void postData(Object data) {

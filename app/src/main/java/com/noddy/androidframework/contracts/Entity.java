@@ -1,4 +1,4 @@
-package com.noddy.androidframework.asynctask.contracts;
+package com.noddy.androidframework.contracts;
 
 /**
  * Created by NoddyLaw on 2016/12/13.
