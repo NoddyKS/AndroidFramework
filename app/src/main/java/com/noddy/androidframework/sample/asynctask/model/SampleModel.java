@@ -79,8 +79,4 @@ public class SampleModel extends BaseModel<DevelopmentObject> {
         }
     }
 
-    @Override
-    public void onCustomQueryReceived(int resultCode, Object data) {
-        mPresenter.receivedCustomData(data);
-    }
 }

@@ -50,8 +50,6 @@ public abstract class BaseModel<T extends Entity> {
 
     public abstract void onPostResultReceived(int resultCode, Object data);
 
-    public abstract void onCustomQueryReceived(int resultCode, Object data);
-
     public abstract void onDataQueryFail(String failMsg);
 
     public BaseModel(Application application, Class entityHolderName) {
@@ -180,8 +178,6 @@ public abstract class BaseModel<T extends Entity> {
             EntityHolder entityHolder = (EntityHolder) data;
 
             onSingleDataReceived(resultCode, entityHolder);
-        } else {
-            onCustomQueryReceived(resultCode, data);
         }
     }
 
@@ -207,10 +203,6 @@ public abstract class BaseModel<T extends Entity> {
                     onDataQueryFail("merage/update holder fail");
                 }
             }
-        } else {
-
-            onCustomQueryReceived(resultCode, data);
-
         }
     }
 
