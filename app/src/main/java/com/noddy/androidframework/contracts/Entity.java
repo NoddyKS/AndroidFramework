@@ -7,11 +7,4 @@ package com.noddy.androidframework.contracts;
 
 public abstract class Entity {
 
-    public abstract String getSingleUrl();
-
-    public abstract String getListUrl();
-
-    public abstract String postUrl();
-
-    public abstract String updateUrl();
 }

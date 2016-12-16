@@ -31,4 +31,14 @@ public interface Contracts {
 
         void receivedCustomData(Object object);
     }
+
+    interface Entity {
+        String getSingleUrl();
+
+        String getListUrl();
+
+        String postUrl();
+
+        String updateUrl();
+    }
 }
