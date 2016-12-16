@@ -97,9 +97,8 @@ public abstract class BaseModel<T extends Entity> {
 
     }
 
-    public void getSingleData() {
-
-        String urlWithOutPaging = getSingleUrl();
+    public void getSingleData(String parameter) {
+        String urlWithOutPaging = getSingleUrl()+((parameter!=null)?parameter:"");
         mRepository = checkNotNull(onRepositorySetUp(), "RcBaseModel: repository cannot be null!");
         mOAuthAoken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
 
@@ -122,7 +121,7 @@ public abstract class BaseModel<T extends Entity> {
         });
     }
 
-    public void getListData(boolean getMoreList) {
+    public void getListData(boolean getMoreList,String parameter) {
         if (!getMoreList)//clear entity list holder
             mEntityHolder.clear();
 
@@ -131,7 +130,7 @@ public abstract class BaseModel<T extends Entity> {
             return;
         }
 
-        String urlWithOutPaging = getListUrl();
+        String urlWithOutPaging = getListUrl()+((parameter!=null)?parameter:"");
 
         urlWithOutPaging += generatePagingPara();//add pag
         mOAuthAoken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
