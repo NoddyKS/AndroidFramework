@@ -29,13 +29,12 @@ import static com.noddy.androidframework.Until.checkNotNull;
  */
 
 public class GetQuerySpectification extends BaseQuerySpecification {
-    private final String TAG = getClass().getName();
-
-    private String mQueryUrl, mToken, mDateFormat;
-
-    private Class mEntityClass;
 
     private final String mDefaultDateFormatForJson = "yyyy-MM-dd'T'HH:mm:ss";
+    private final String TAG = getClass().getName();
+
+    private Class mEntityClass;
+    private String mQueryUrl, mToken, mDateFormat;
 
     public GetQuerySpectification(String queryUrl, String token, Class className) {
 

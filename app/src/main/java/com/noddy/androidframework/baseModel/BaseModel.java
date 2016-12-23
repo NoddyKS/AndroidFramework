@@ -30,7 +30,7 @@ public abstract class BaseModel<T extends Entity> {
 
     private Application mApplication;
 
-    private String mOAuthAoken;
+    private String mOAuthToken;
 
     private Class mEntityHolderClass;
 
@@ -60,8 +60,8 @@ public abstract class BaseModel<T extends Entity> {
         mEntityHolder = new EntityHolder();
     }
 
-    public String getmOAuthAoken() {
-        return mOAuthAoken;
+    public String getmOAuthToken() {
+        return mOAuthToken;
     }
 
     public Application getApplication() {
@@ -75,7 +75,7 @@ public abstract class BaseModel<T extends Entity> {
     public void postData(Object data) {
         mRepository = checkNotNull(onRepositorySetUp(), "RcBaseModel: repository cannot be null!");
         String postUrl = getPostUrl();
-        mOAuthAoken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
+        mOAuthToken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
 
         mRepository.postData(postUrl, data, new CallbackContract.ConnectionCallback() {
             @Override
@@ -98,9 +98,9 @@ public abstract class BaseModel<T extends Entity> {
     }
 
     public void getSingleData(String parameter) {
-        String urlWithOutPaging = getSingleUrl()+((parameter!=null)?parameter:"");
+        String urlWithOutPaging = getSingleUrl() + ((parameter != null) ? parameter : "");
         mRepository = checkNotNull(onRepositorySetUp(), "RcBaseModel: repository cannot be null!");
-        mOAuthAoken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
+        mOAuthToken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
 
         mRepository.getData(urlWithOutPaging, mEntityHolderClass, new CallbackContract.ConnectionCallback() {
             @Override
@@ -121,19 +121,19 @@ public abstract class BaseModel<T extends Entity> {
         });
     }
 
-    public void getListData(boolean getMoreList,String parameter) {
+    public void getListData(boolean getMoreList, String parameter) {
         if (!getMoreList)//clear entity list holder
             mEntityHolder.clear();
 
-        if (mEntityHolder != null && !mEntityHolder.isCanRequestMore()&&mEntityHolder.getResults()!=null&&mEntityHolder.getResults().length>0) {
+        if (mEntityHolder != null && !mEntityHolder.isCanRequestMore() && mEntityHolder.getResults() != null && mEntityHolder.getResults().length > 0) {
             onDataQueryFail("can't get more lsit data (page == numPages)");
             return;
         }
 
-        String urlWithOutPaging = getListUrl()+((parameter!=null)?parameter:"");
+        String urlWithOutPaging = getListUrl() + ((parameter != null) ? parameter : "");
 
         urlWithOutPaging += generatePagingPara();//add pag
-        mOAuthAoken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
+        mOAuthToken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
 
 
         mRepository = checkNotNull(onRepositorySetUp(), "RcBaseModel: repository cannot be null!");
@@ -166,15 +166,15 @@ public abstract class BaseModel<T extends Entity> {
     }
 
     public void customQuery(CallbackContract.ConnectionCallback callBack, BaseQuerySpecification specification) {
-        customQuery(callBack,specification,0,0);
+        customQuery(callBack, specification, 0, 0);
     }
 
-    public void customQuery(CallbackContract.ConnectionCallback callBack, BaseQuerySpecification specification,int retryQuery,int secondOfTimeout) {
+    public void customQuery(CallbackContract.ConnectionCallback callBack, BaseQuerySpecification specification, int retryQuery, int secondOfTimeout) {
         // specification = what to do query , callBack = what to do when response
-        AsyncTask_With_CallBack async_sample= new AsyncTask_With_CallBack(mApplication, callBack, specification);
-        if(retryQuery>0)//at last 1 times
+        AsyncTask_With_CallBack async_sample = new AsyncTask_With_CallBack(mApplication, callBack, specification);
+        if (retryQuery > 0)//at last 1 times
             async_sample.setmNumberToRetryQuery(retryQuery);//set number to try query times
-        if(secondOfTimeout>5000)//at last 5 seconds
+        if (secondOfTimeout > 5000)//at last 5 seconds
             async_sample.setTimeoutlimit(secondOfTimeout); //set timeout connect mini seconds
         async_sample.execute();
     }

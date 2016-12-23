@@ -41,12 +41,12 @@ public class BaseRepository {
     }
 
     public void getData(String url,Class entityHolder ,final CallbackContract.ConnectionCallback callBack){
-        GetQuerySpectification  specification = new GetQuerySpectification(url,mModel.getmOAuthAoken(), entityHolder);
+        GetQuerySpectification  specification = new GetQuerySpectification(url,mModel.getmOAuthToken(), entityHolder);
         executeQuery(specification,callBack);
     }
 
     public void postData(String url,Object objectForUpload ,final CallbackContract.ConnectionCallback callBack){
-        PostQuerySpectification  specification = new PostQuerySpectification(url,mModel.getmOAuthAoken(), objectForUpload);
+        PostQuerySpectification  specification = new PostQuerySpectification(url,mModel.getmOAuthToken(), objectForUpload);
         executeQuery(specification,callBack);
     }
 
