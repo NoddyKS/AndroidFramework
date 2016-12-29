@@ -1,24 +1,41 @@
 package com.noddy.androidframework.repository.entityHolder;
 
+import com.noddy.androidframework.contracts.Contracts;
+
 import java.io.Serializable;
 import java.util.Arrays;
+
+import static com.noddy.androidframework.Until.append;
+import static com.noddy.androidframework.Until.clearArray;
 
 /**
  * Created by NoddyLaw on 2016/12/13.
  */
 
-public class EntityHolder<T> implements Serializable {//JsonContainer
+public abstract class EntityHolder<T> implements Serializable {//JsonContainer
     private T[] results;
 
     private boolean canRequestMore;
-    public int offset;//end +1
-    public int zoom;
-    public int page;
-    public int numPages;
-    public int pageSize;
-    public int start;
-    public int end;
-    public int total;
+    private int offset;//end +1
+    private int zoom;
+    private int page;
+    private int numPages;
+    private int pageSize;
+    private int start;
+    private int end;
+    private int total;
+
+    public static final String GET_SINGLE = "getSingleUrl";
+
+    public static final String GET_LIST = "getListUrl";
+
+    public static final String POST = "getPostUrl";
+
+    abstract String getSingleUrl();
+
+    abstract String getListUrl();
+
+    abstract String getPostUrl();
 
     public boolean isCanRequestMore() {
         return canRequestMore;
@@ -116,17 +133,5 @@ public class EntityHolder<T> implements Serializable {//JsonContainer
         start = 0;
         end = 0;
         total = 0;
-    }
-
-    private <T> T[] clearArray(T[] arr) {
-        arr = Arrays.copyOf(arr, 0);
-        return arr;
-    }
-
-    private <T> T[] append(T[] arr, T element) {
-        final int N = arr.length;
-        arr = Arrays.copyOf(arr, N + 1);
-        arr[N] = element;
-        return arr;
     }
 }

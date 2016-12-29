@@ -1,14 +1,10 @@
 package com.noddy.androidframework.asynctask.base;
 
 import android.app.Application;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.noddy.androidframework.Until;
-import com.noddy.androidframework.asynctask.specification.base.BaseQuerySpecification;
+import com.noddy.androidframework.asynctask.specification.base.QuerySpecification;
 import com.noddy.androidframework.config.Configs;
 
 import static com.noddy.androidframework.Until.checkNotNull;
@@ -17,7 +13,7 @@ import static com.noddy.androidframework.Until.checkNotNull;
  * Created by NoddyLaw on 2016/12/5.
  */
 
-public abstract class ConnectionAsyncTask extends android.os.AsyncTask<Object, Object, Object> {
+public abstract class AdvancedAsyncTask extends android.os.AsyncTask<Object, Object, Object> {
     private static final String TAG = "RcConnectionAsyncTask";
     private final int DEFAULT_RETRY_QUERY = Configs.NUM_TO_TRY_TO_CONNECT;
     private final int TIME_WAIT = Configs.SECOND_TO_WAIT_IF_CONNECT_FAILS * 1000;
@@ -28,9 +24,9 @@ public abstract class ConnectionAsyncTask extends android.os.AsyncTask<Object, O
 
     private Application mApplication;
 
-    private BaseQuerySpecification mSpectification;
+    private QuerySpecification mSpectification;
 
-    public ConnectionAsyncTask(Application application, BaseQuerySpecification spectification) {
+    public AdvancedAsyncTask(Application application, QuerySpecification spectification) {
         mApplication = checkNotNull(application, "RcConnectionAsyncTask: MainApplication cannot be null!");
         mSpectification = checkNotNull(spectification, "RcConnectionAsyncTask: FeedEnum cannot be null!");
     }
@@ -39,7 +35,7 @@ public abstract class ConnectionAsyncTask extends android.os.AsyncTask<Object, O
         return mApplication;
     }
 
-    public BaseQuerySpecification getSpectification() {
+    public QuerySpecification getSpectification() {
         return mSpectification;
     }
 

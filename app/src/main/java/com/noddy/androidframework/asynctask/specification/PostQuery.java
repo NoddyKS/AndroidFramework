@@ -3,7 +3,7 @@ package com.noddy.androidframework.asynctask.specification;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.noddy.androidframework.asynctask.specification.base.BaseQuerySpecification;
+import com.noddy.androidframework.asynctask.specification.base.QuerySpecification;
 import com.noddy.androidframework.config.Configs;
 
 import java.io.BufferedReader;
@@ -28,13 +28,13 @@ import javax.net.ssl.X509TrustManager;
  * Created by NoddyLaw on 2016/12/7.
  */
 
-public class PostQuerySpectification extends BaseQuerySpecification {
+public class PostQuery extends QuerySpecification {
 
     private String mQueryUrl, mToken;
 
     private Object mUploadObject;
 
-    public PostQuerySpectification(String queryUrl, String token, Object uploadObject){
+    public PostQuery(String queryUrl, String token, Object uploadObject){
         mQueryUrl = queryUrl;
         mToken = token;
         mUploadObject = uploadObject;

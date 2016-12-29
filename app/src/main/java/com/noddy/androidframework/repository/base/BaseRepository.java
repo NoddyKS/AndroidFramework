@@ -3,11 +3,10 @@ package com.noddy.androidframework.repository.base;
 import android.app.Application;
 
 import com.noddy.androidframework.contracts.CallbackContract;
-import com.noddy.androidframework.asynctask.specification.GetQuerySpectification;
-import com.noddy.androidframework.asynctask.specification.PostQuerySpectification;
-import com.noddy.androidframework.asynctask.specification.base.BaseQuerySpecification;
-import com.noddy.androidframework.baseModel.BaseModel;
-import com.noddy.androidframework.asynctask.AsyncTask_With_CallBack;
+import com.noddy.androidframework.asynctask.specification.GetQuery;
+import com.noddy.androidframework.asynctask.specification.PostQuery;
+import com.noddy.androidframework.asynctask.specification.base.QuerySpecification;
+import com.noddy.androidframework.asynctask.ConnectionAsyncTask;
 
 import static com.noddy.androidframework.Until.checkNotNull;
 
@@ -17,19 +16,20 @@ import static com.noddy.androidframework.Until.checkNotNull;
 
 public class BaseRepository {
 
-    private BaseModel mModel;
+    private String mOAuthToken;
 
     private Application mApplication;
 
     private int mRetryQuery = 3 , mTimeOut = 3*1000;
 
-    public BaseRepository(Application application,BaseModel model){
+    private Object mUploadObject;
 
-        mModel= checkNotNull(model, "BaseRepository: model cannot be null!");
+    private Class mEntityHolder;
+
+    public BaseRepository(Application application,String token){
+
+        mOAuthToken= checkNotNull(token, "BaseRepository: token cannot be null!");
         mApplication= checkNotNull(application, "BaseRepository: application cannot be null!");
-        //check entry object can't be EntityContract object
-
-
     }
 
     public void setRetryQuery(int retryQuery) {
@@ -41,20 +41,38 @@ public class BaseRepository {
     }
 
     public void getData(String url,Class entityHolder ,final CallbackContract.ConnectionCallback callBack){
-        GetQuerySpectification  specification = new GetQuerySpectification(url,mModel.getmOAuthToken(), entityHolder);
+       // GetQuerySpectification  specification = new GetQuerySpectification(url,mModel.getOAuthToken(), entityHolder);
+        mEntityHolder  =checkNotNull(entityHolder, "BaseRepository: entityHolder cannot be null!");
+        QuerySpecification specification = getSpecification(SpecType.GET,url);
         executeQuery(specification,callBack);
     }
 
     public void postData(String url,Object objectForUpload ,final CallbackContract.ConnectionCallback callBack){
-        PostQuerySpectification  specification = new PostQuerySpectification(url,mModel.getmOAuthToken(), objectForUpload);
+        mUploadObject =checkNotNull(objectForUpload, "BaseRepository: objectForUpload cannot be null!");
+        QuerySpecification specification = getSpecification(SpecType.POST,url);
         executeQuery(specification,callBack);
     }
 
-    private void executeQuery(BaseQuerySpecification specification,CallbackContract.ConnectionCallback callBack){
+    private void executeQuery(QuerySpecification specification, CallbackContract.ConnectionCallback callBack){
         // specification = what to do query , callBack = what to do when response
-        AsyncTask_With_CallBack async_sample= new AsyncTask_With_CallBack(mApplication, callBack, specification);
-        async_sample.setmNumberToRetryQuery(mRetryQuery);//set number to try query times
-        async_sample.setTimeoutlimit(mTimeOut); //set timeout connect mini seconds
-        async_sample.execute();
+        ConnectionAsyncTask asyncProcess= new ConnectionAsyncTask(mApplication, callBack, specification);
+        asyncProcess.setmNumberToRetryQuery(mRetryQuery);//set number to try query times
+        asyncProcess.setTimeoutlimit(mTimeOut); //set timeout connect mini seconds
+        asyncProcess.execute();
+    }
+
+    public QuerySpecification getSpecification(SpecType specType, String url){
+        switch (specType){
+            case GET:
+                return new GetQuery(url,mOAuthToken, mEntityHolder);
+            case POST:
+                return new PostQuery(url,mOAuthToken, mUploadObject);
+        }
+        return  null;
+    }
+
+    public enum SpecType{
+        GET,
+        POST
     }
 }

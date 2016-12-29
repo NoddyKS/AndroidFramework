@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.noddy.androidframework.asynctask.specification.base.BaseQuerySpecification;
+import com.noddy.androidframework.asynctask.specification.base.QuerySpecification;
 import com.noddy.androidframework.config.Configs;
 
 import org.mortbay.jetty.HttpException;
@@ -28,7 +28,7 @@ import static com.noddy.androidframework.Until.checkNotNull;
  * Created by NoddyLaw on 2016/12/6.
  */
 
-public class GetQuerySpectification extends BaseQuerySpecification {
+public class GetQuery extends QuerySpecification {
 
     private final String mDefaultDateFormatForJson = "yyyy-MM-dd'T'HH:mm:ss";
     private final String TAG = getClass().getName();
@@ -36,7 +36,7 @@ public class GetQuerySpectification extends BaseQuerySpecification {
     private Class mEntityClass;
     private String mQueryUrl, mToken, mDateFormat;
 
-    public GetQuerySpectification(String queryUrl, String token, Class className) {
+    public GetQuery(String queryUrl, String token, Class className) {
 
         mQueryUrl = checkNotNull(queryUrl, "GetQuerySpectification: queryUrl cannot be null!");
         mToken = checkNotNull(token, "GetQuerySpectification: token cannot be null!");
@@ -44,7 +44,7 @@ public class GetQuerySpectification extends BaseQuerySpecification {
         mDateFormat = mDefaultDateFormatForJson;
     }
 
-    public GetQuerySpectification(String queryUrl, String token, Class className, String dateFormat) {
+    public GetQuery(String queryUrl, String token, Class className, String dateFormat) {
 
         mQueryUrl = checkNotNull(queryUrl, "GetQuerySpectification: queryUrl cannot be null!");
         mToken = checkNotNull(token, "GetQuerySpectification: token cannot be null!");
@@ -76,7 +76,8 @@ public class GetQuerySpectification extends BaseQuerySpecification {
         try {
 
             HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(url).openConnection();
-            urlConnection.setRequestProperty("Authorization", "Bearer " + token);
+            if (token.length() > 0)
+                urlConnection.setRequestProperty("Authorization", "Bearer " + token);
             urlConnection.setConnectTimeout(Configs.HTTP_CONNECT_TIMEOUT);
             urlConnection.setDoInput(true);
             urlConnection.connect();

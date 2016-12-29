@@ -2,9 +2,9 @@ package com.noddy.androidframework.asynctask;
 
 import android.app.Application;
 
-import com.noddy.androidframework.asynctask.base.ConnectionAsyncTask;
+import com.noddy.androidframework.asynctask.base.AdvancedAsyncTask;
 import com.noddy.androidframework.contracts.CallbackContract;
-import com.noddy.androidframework.asynctask.specification.base.BaseQuerySpecification;
+import com.noddy.androidframework.asynctask.specification.base.QuerySpecification;
 
 import java.net.HttpURLConnection;
 
@@ -12,13 +12,13 @@ import java.net.HttpURLConnection;
  * Created by NoddyLaw on 2016/12/5.
  */
 
-public class AsyncTask_With_CallBack extends ConnectionAsyncTask {
+public class ConnectionAsyncTask extends AdvancedAsyncTask {
 
     private CallbackContract.ConnectionCallback mCallback;
 
     private  final String mSpectificationQueryError = "BaseQuerySpectification query error: ";
 
-    public AsyncTask_With_CallBack(Application application, CallbackContract.ConnectionCallback callback, BaseQuerySpecification spectification) {
+    public ConnectionAsyncTask(Application application, CallbackContract.ConnectionCallback callback, QuerySpecification spectification) {
         super(application, spectification);
         mCallback = callback;
     }

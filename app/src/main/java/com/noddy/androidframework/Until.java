@@ -6,6 +6,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
 
+import java.util.Arrays;
+
 /**
  * Created by NoddyLaw on 2016/12/13.
  */
@@ -29,5 +31,17 @@ public class Until {
 
         }
         return false;
+    }
+
+    public static <T> T[] clearArray(T[] arr) {
+        arr = Arrays.copyOf(arr, 0);
+        return arr;
+    }
+
+    public static <T> T[] append(T[] arr, T element) {
+        final int N = arr.length;
+        arr = Arrays.copyOf(arr, N + 1);
+        arr[N] = element;
+        return arr;
     }
 }

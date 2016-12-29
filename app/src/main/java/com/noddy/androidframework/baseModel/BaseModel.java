@@ -3,18 +3,18 @@ package com.noddy.androidframework.baseModel;
 import android.app.Application;
 import android.util.Log;
 
+import com.noddy.androidframework.basePresenter.BasePresenter;
 import com.noddy.androidframework.contracts.CallbackContract;
-import com.noddy.androidframework.contracts.Entity;
-import com.noddy.androidframework.asynctask.specification.base.BaseQuerySpecification;
+import com.noddy.androidframework.asynctask.specification.base.QuerySpecification;
 import com.noddy.androidframework.config.Configs;
-import com.noddy.androidframework.repository.ResultSetObject;
+import com.noddy.androidframework.errorHandle.CatchedRequestErrorType;
 import com.noddy.androidframework.repository.base.BaseRepository;
 import com.noddy.androidframework.repository.entityHolder.EntityHolder;
-import com.noddy.androidframework.asynctask.AsyncTask_With_CallBack;
+import com.noddy.androidframework.asynctask.ConnectionAsyncTask;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import static com.noddy.androidframework.Until.checkNotNull;
 
@@ -22,9 +22,11 @@ import static com.noddy.androidframework.Until.checkNotNull;
  * Created by NoddyLaw on 2016/12/2.
  */
 
-public abstract class BaseModel<T extends Entity> {
+public abstract class BaseModel{
 
     private EntityHolder mEntityHolder;
+
+    private BasePresenter mPresenter;
 
     private BaseRepository mRepository;
 
@@ -32,35 +34,33 @@ public abstract class BaseModel<T extends Entity> {
 
     private String mOAuthToken;
 
-    private Class mEntityHolderClass;
-
     public abstract BaseRepository onRepositorySetUp();
 
     public abstract String onTokenSetUp();
 
-    public abstract String getListUrl();
+//    public abstract String getListUrl();
+//
+//    public abstract String getSingleUrl();
+//
+//    public abstract String getPostUrl();
 
-    public abstract String getSingleUrl();
+//    public abstract void onSingleDataReceived(int resultCode, Object data);
+//
+//    public abstract void onListDataReceived(int resultCode, Object data);
+//
+//    public abstract void onPostResultReceived(int resultCode, Object data);
+//
+//    public abstract void onDataQueryFail(String failMsg);
 
-    public abstract String getPostUrl();
-
-    public abstract void onSingleDataReceived(int resultCode, Object data);
-
-    public abstract void onListDataReceived(int resultCode, Object data);
-
-    public abstract void onPostResultReceived(int resultCode, Object data);
-
-    public abstract void onDataQueryFail(String failMsg);
-
-    public BaseModel(Application application, Class entityHolderName) {
+    public BaseModel(Application application, EntityHolder entityHolder,BasePresenter presenter) {
         mApplication = checkNotNull(application, "RcBaseModel: application cannot be null!");
 
-        mEntityHolderClass = checkNotNull(entityHolderName, "RcBaseModel: entityHolderName cannot be null!");
+        mPresenter = checkNotNull(presenter, "RcBaseModel: presenter cannot be null!");
 
-        mEntityHolder = new EntityHolder();
+        mEntityHolder =checkNotNull(entityHolder, "RcBaseModel: entityHolder cannot be null!");;
     }
 
-    public String getmOAuthToken() {
+    public String getOAuthToken() {
         return mOAuthToken;
     }
 
@@ -69,28 +69,28 @@ public abstract class BaseModel<T extends Entity> {
     }
 
     public Class getEntityHolderClass() {
-        return mEntityHolderClass;
+        return mEntityHolder.getClass();
     }
 
     public void postData(Object data) {
         mRepository = checkNotNull(onRepositorySetUp(), "RcBaseModel: repository cannot be null!");
-        String postUrl = getPostUrl();
+        String postUrl = getUrl(UrlType.POST);
         mOAuthToken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
 
         mRepository.postData(postUrl, data, new CallbackContract.ConnectionCallback() {
             @Override
             public void onApiResponseSuccess(int responseCode, Object data) {//entity
-                onPostResultReceived(responseCode, data);
+                mPresenter.onPostResultReceived(responseCode, (EntityHolder) data);
             }
 
             @Override
             public void onApiResponseFail(int responseCode) {
-                onPostResultReceived(responseCode, null);
+                mPresenter.onPostResultReceived(responseCode, null);
             }
 
             @Override
             public void onApiRequestFail(String errorMsg) {
-                onDataQueryFail(errorMsg);
+                mPresenter.onDataQueryFail(CatchedRequestErrorType.CODING_ERROR);
                 //coding fail
             }
         });
@@ -98,11 +98,11 @@ public abstract class BaseModel<T extends Entity> {
     }
 
     public void getSingleData(String parameter) {
-        String urlWithOutPaging = getSingleUrl() + ((parameter != null) ? parameter : "");
+        String urlWithOutPaging = getUrl(UrlType.GET_SINGLE) + ((parameter != null) ? parameter : "");
         mRepository = checkNotNull(onRepositorySetUp(), "RcBaseModel: repository cannot be null!");
         mOAuthToken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
 
-        mRepository.getData(urlWithOutPaging, mEntityHolderClass, new CallbackContract.ConnectionCallback() {
+        mRepository.getData(urlWithOutPaging, getEntityHolderClass(), new CallbackContract.ConnectionCallback() {
             @Override
             public void onApiResponseSuccess(int responseCode, Object data) {//entity
                 receiveSingleData(responseCode, data);
@@ -115,7 +115,7 @@ public abstract class BaseModel<T extends Entity> {
 
             @Override
             public void onApiRequestFail(String errorMsg) {
-                onDataQueryFail(errorMsg);
+                mPresenter.onDataQueryFail(CatchedRequestErrorType.CODING_ERROR);
                 //coding fail
             }
         });
@@ -126,22 +126,21 @@ public abstract class BaseModel<T extends Entity> {
             mEntityHolder.clear();
 
         if (mEntityHolder != null && !mEntityHolder.isCanRequestMore() && mEntityHolder.getResults() != null && mEntityHolder.getResults().length > 0) {
-            onDataQueryFail("can't get more lsit data (page == numPages)");
+            mPresenter.onDataQueryFail(CatchedRequestErrorType.CAN_NOT_GET_MORE);
             return;
         }
 
-        String urlWithOutPaging = getListUrl() + ((parameter != null) ? parameter : "");
+        String urlWithOutPaging = getUrl(UrlType.GET_LIST) + ((parameter != null) ? parameter : "");
 
         urlWithOutPaging += generatePagingPara();//add pag
         mOAuthToken = checkNotNull(onTokenSetUp(), "RcBaseModel: OAuth token cannot be null!");
 
-
         mRepository = checkNotNull(onRepositorySetUp(), "RcBaseModel: repository cannot be null!");
-        mRepository.getData(urlWithOutPaging, mEntityHolderClass, new CallbackContract.ConnectionCallback() {
+        mRepository.getData(urlWithOutPaging, getEntityHolderClass(), new CallbackContract.ConnectionCallback() {
             @Override
             public void onApiResponseSuccess(int responseCode, Object data) {//entityholder
                 if (responseCode != HttpURLConnection.HTTP_OK || data == null) {
-                    onDataQueryFail("coding fail");
+                    mPresenter.onDataQueryFail(CatchedRequestErrorType.getTypeByCode(responseCode));
                 } else {
                     receiveListData(responseCode, data);
                 }
@@ -154,38 +153,42 @@ public abstract class BaseModel<T extends Entity> {
 
             @Override
             public void onApiRequestFail(String errorMsg) {
-                onDataQueryFail(errorMsg);
+                mPresenter.onDataQueryFail(CatchedRequestErrorType.CODING_ERROR);
                 //coding fail
             }
         });
     }
 
     private String generatePagingPara() {
-        String paginPara = Configs.PARAMETER_LIMIT + String.format(Configs.PARAMETER_OFFSET, mEntityHolder.offset);
+        String paginPara = Configs.PARAMETER_LIMIT + String.format(Configs.PARAMETER_OFFSET, mEntityHolder.getOffset());
         return paginPara;
     }
 
-    public void customQuery(CallbackContract.ConnectionCallback callBack, BaseQuerySpecification specification) {
+    public void customQuery(CallbackContract.ConnectionCallback callBack, QuerySpecification specification) {
         customQuery(callBack, specification, 0, 0);
     }
 
-    public void customQuery(CallbackContract.ConnectionCallback callBack, BaseQuerySpecification specification, int retryQuery, int secondOfTimeout) {
+    public void customQuery(CallbackContract.ConnectionCallback callBack, QuerySpecification specification, int retryQuery, int secondOfTimeout) {
         // specification = what to do query , callBack = what to do when response
-        AsyncTask_With_CallBack async_sample = new AsyncTask_With_CallBack(mApplication, callBack, specification);
+        ConnectionAsyncTask async_sample = new ConnectionAsyncTask(mApplication, callBack, specification);
         if (retryQuery > 0)//at last 1 times
             async_sample.setmNumberToRetryQuery(retryQuery);//set number to try query times
-        if (secondOfTimeout > 5000)//at last 5 seconds
-            async_sample.setTimeoutlimit(secondOfTimeout); //set timeout connect mini seconds
+        if (secondOfTimeout > 5)//at last 5 seconds
+            async_sample.setTimeoutlimit(secondOfTimeout*1000); //set timeout connect mini seconds
         async_sample.execute();
     }
 
     private void receiveSingleData(int resultCode, Object data) {
 
-        if (data instanceof EntityHolder) {
+        if(resultCode ==HttpURLConnection.HTTP_OK ){
+            if (data instanceof EntityHolder) {
 
-            EntityHolder entityHolder = (EntityHolder) data;
+                EntityHolder entityHolder = (EntityHolder) data;
 
-            onSingleDataReceived(resultCode, entityHolder);
+                mPresenter.onSingleDataReceived(resultCode, entityHolder);
+            }
+        }else{
+            mPresenter.onDataQueryFail(CatchedRequestErrorType.getTypeByCode(resultCode));
         }
     }
 
@@ -206,23 +209,65 @@ public abstract class BaseModel<T extends Entity> {
 
             } finally {
                 if (updatedHolder) {
-                    onListDataReceived(resultCode, mEntityHolder);
+                    mPresenter.onListDataReceived(resultCode, mEntityHolder);
                 } else {
-                    onDataQueryFail("merage/update holder fail");
+                    mPresenter.onDataQueryFail(CatchedRequestErrorType.ENTITY_HOLDER_CONVERTION_FAIL);
                 }
             }
         }
     }
 
-    private ResultSetObject getPackagedDevelopments(boolean resultOk, boolean canRequest, EntityHolder<T> entityHolder) {
-        ResultSetObject<ArrayList<T>> packagedDevelopments = new ResultSetObject();
+    private String getUrl(UrlType getType){
+        String finalUrl="";
+        Method method ;
+        try {
+            String methodName = "";
+            switch (getType){
+                case GET_SINGLE:
+                    methodName = mEntityHolder.GET_SINGLE;
+                    break;
+                case GET_LIST:
+                    methodName = mEntityHolder.GET_LIST;
+                    break;
+                case POST:
+                    methodName = mEntityHolder.POST;
+                    break;
+            }
+            method = mEntityHolder.getClass().getMethod(methodName);
+            finalUrl = (String)(method.invoke(mEntityHolder));
 
-        packagedDevelopments.setResultOk(resultOk);
-        packagedDevelopments.setCanRequestMore(canRequest);
-        packagedDevelopments.setPageResultCount(entityHolder.offset);
-        packagedDevelopments.setResultCount(entityHolder.total);
-        packagedDevelopments.setData(new ArrayList(Arrays.asList(entityHolder.getResults())));
+        } catch (SecurityException e) {
+            Log.d("runtime","testMethod getMethod error: "+e.getMessage());
+        } catch (NoSuchMethodException e) {
+            Log.d("runtime","testMethod getMethod error: "+e.getMessage());
+        } catch (IllegalArgumentException e) {
+            Log.d("runtime","testMethod getMethod error: "+e.getMessage());
+        } catch (IllegalAccessException e) {
+            Log.d("runtime","testMethod getMethod error: "+e.getMessage());
+        } catch (InvocationTargetException e) {
+            Log.d("runtime","testMethod getMethod error: "+e.getMessage());
+        }  catch (Exception e) {
+            Log.d("runtime","testMethod getMethod error: "+e.getMessage());
+        }
 
-        return packagedDevelopments;
+        return finalUrl;
     }
+
+    private enum UrlType{
+        GET_SINGLE,
+        GET_LIST,
+        POST
+    }
+
+//    private ResultSetObject getPackagedDevelopments(boolean resultOk, boolean canRequest, EntityHolder<T> entityHolder) {
+//        ResultSetObject<ArrayList<T>> packagedDevelopments = new ResultSetObject();
+//
+//        packagedDevelopments.setResultOk(resultOk);
+//        packagedDevelopments.setCanRequestMore(canRequest);
+//        packagedDevelopments.setPageResultCount(entityHolder.offset);
+//        packagedDevelopments.setResultCount(entityHolder.total);
+//        packagedDevelopments.setData(new ArrayList(Arrays.asList(entityHolder.getResults())));
+//
+//        return packagedDevelopments;
+//    }
 }

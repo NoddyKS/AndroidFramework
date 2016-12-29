@@ -4,7 +4,7 @@ package com.noddy.androidframework.asynctask.specification.base;
  * Created by NoddyLaw on 2016/12/6.
  */
 
-public  abstract class BaseQuerySpecification {
+public  abstract class QuerySpecification {
     private int mResponseCode;
     private String mResponseMsg;
 
