@@ -224,13 +224,11 @@ public abstract class BaseModel{
             String methodName = "";
             switch (getType){
                 case GET_SINGLE:
-                    methodName = mEntityHolder.GET_SINGLE;
-                    break;
                 case GET_LIST:
-                    methodName = mEntityHolder.GET_LIST;
+                    methodName = mEntityHolder.GET_URL;
                     break;
                 case POST:
-                    methodName = mEntityHolder.POST;
+                    methodName = mEntityHolder.POST_URL;
                     break;
             }
             method = mEntityHolder.getClass().getMethod(methodName);

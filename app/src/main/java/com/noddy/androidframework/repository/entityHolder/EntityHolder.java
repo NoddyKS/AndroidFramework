@@ -25,17 +25,13 @@ public abstract class EntityHolder<T> implements Serializable {//JsonContainer
     private int end;
     private int total;
 
-    public static final String GET_SINGLE = "getSingleUrl";
+    public static final String GET_URL = "generateGetUrl";
 
-    public static final String GET_LIST = "getListUrl";
+    public static final String POST_URL = "generatePostUrl";
 
-    public static final String POST = "getPostUrl";
+    public abstract String generateGetUrl();
 
-    public abstract String getSingleUrl();
-
-    public abstract String getListUrl();
-
-    public abstract String getPostUrl();
+    public abstract String generatePostUrl();
 
     public boolean isCanRequestMore() {
         return canRequestMore;
