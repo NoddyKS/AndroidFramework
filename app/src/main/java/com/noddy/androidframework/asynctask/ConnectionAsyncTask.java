@@ -51,7 +51,7 @@ public class ConnectionAsyncTask extends AdvancedAsyncTask {
                 mCallback.onApiResponseSuccess(responseCode, result);
             }
         }catch (Exception e){
-
+            mCallback.onApiRequestFail((String)result);
         }
     }
 }
