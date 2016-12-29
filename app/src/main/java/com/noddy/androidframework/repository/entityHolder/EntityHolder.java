@@ -31,11 +31,11 @@ public abstract class EntityHolder<T> implements Serializable {//JsonContainer
 
     public static final String POST = "getPostUrl";
 
-    abstract String getSingleUrl();
+    public abstract String getSingleUrl();
 
-    abstract String getListUrl();
+    public abstract String getListUrl();
 
-    abstract String getPostUrl();
+    public abstract String getPostUrl();
 
     public boolean isCanRequestMore() {
         return canRequestMore;
