@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
@@ -91,9 +92,19 @@ public class GetQuery extends QuerySpecification {
             if (responseCode == HttpURLConnection.HTTP_OK) {
 
                 InputStream inputStream = new InflaterInputStream(urlConnection.getInputStream(), new Inflater(true));
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                BufferedReader reader ;
+                String line = "";
+                String header = urlConnection.getContentEncoding();
+                Log.d("runtime", "response header : " + header);
+                if ("deflate".equals(header)) {
+                    inputStream =new InflaterInputStream(inputStream,new Inflater(true));
 
-                String line;
+                } else if ("gzip".equals(header)) {
+                    inputStream =new GZIPInputStream(inputStream);
+                }
+
+                reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+
                 while ((line = reader.readLine()) != null) {
                     stringBuilder.append(line);
                 }

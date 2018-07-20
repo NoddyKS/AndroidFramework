@@ -15,6 +15,7 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
@@ -84,9 +85,19 @@ public class PostQuery extends QuerySpecification {
 
                 StringBuilder stringBuilder = new StringBuilder();
                 InputStream inputStream = new InflaterInputStream(urlConnection.getInputStream(), new Inflater(true));
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(inputStream));
-                String line;
+                BufferedReader reader ;
+                String line = "";
+                String header = urlConnection.getContentEncoding();
+                Log.d("runtime", "response header : " + header);
+                if ("deflate".equals(header)) {
+                    inputStream =new InflaterInputStream(inputStream,new Inflater(true));
+
+                } else if ("gzip".equals(header)) {
+                    inputStream =new GZIPInputStream(inputStream);
+                }
+
+                reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+
                 while ((line = reader.readLine()) != null) {
                     stringBuilder.append(line);
                 }
